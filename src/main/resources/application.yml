@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: encurtaai
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/encurtaai
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+
+springdoc:
+  api-docs:
+    path: /api-docs
+
+  swagger-ui:
+    path: /swagger
+
+server:
+  port: 8080
+
+app:
+  base-url: http://localhost:8080
