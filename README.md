@@ -14,7 +14,7 @@ global exception handling, database migrations and OpenAPI documentation.
 * [Running the Project](#running-the-project)
 * [API Documentation](#api-documentation)
 * [API Endpoints](#api-endpoints)
-* [Example Request & Response](#example-request-&-Response)
+* [Example Requests and Responses](#example-requests-and-responses)
 * [Project Structure](#project-structure)
 * [Architecture](#architecture)
 * [My Contact](#my-contact)
@@ -37,7 +37,8 @@ Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the
 
 * Create shortened URLs
 * Redirect using generated or custom short codes
-* List all registered links
+* List links with pagination
+* Sort links by creation date
 * Retrieve links by short code
 * Update existing links
 * Delete links
@@ -94,13 +95,23 @@ http://localhost:8080/swagger
 | Method | Endpoint | Description |
 |----------|------------|-----|
 POST | `/api/v1/links` | Create a shortened URL
-GET | `/api/v1/links` | List all links
+GET | `/api/v1/links` | List all links (paginated)
 GET | `/api/v1/links/{code}` | Retrieve a link by short code
 PUT | `/api/v1/links/{code}` | Update a link
 DELETE | `/api/v1/links/{code}` | Delete a link
 GET | `/{code}` | Redirect to the original URL
 
-## Example Request & Response
+### Pagination
+
+`GET /api/v1/links` supports the following query parameters:
+
+| Parameter | Default | Description |
+|----------|------------|-----|
+`page` | `0` | Page index (zero-based)
+`size` | `25` | Number of items per page (maximum: 200)
+`sort` | `createdAt,desc` | Sort field and direction
+
+## Example Requests and Responses
 
 **POST /api/v1/links**
 
@@ -116,7 +127,7 @@ Response
 
 ```json
 {
-  "id": 2,
+  "id": 1,
   "originalUrl": "https://developer.android.com",
   "shortCode": "Ab3Lt9",
   "shortUrl": "http://localhost:8080/Ab3Lt9"
@@ -126,20 +137,28 @@ Response
 **GET /api/v1/links**
 
 ```json
-[
-  {
-    "id": 1,
-    "originalUrl": "https://github.com/gblrodrigues",
-    "shortCode": "github",
-    "shortUrl": "http://localhost:8080/github"
-  },
-  {
-    "id": 2,
-    "originalUrl": "https://developer.android.com",
-    "shortCode": "Ab3Lt9",
-    "shortUrl": "http://localhost:8080/Ab3Lt9"
+{
+  "data": [
+    {
+      "id": 2,
+      "originalUrl": "https://github.com/gblrodrigues",
+      "shortCode": "github",
+      "shortUrl": "http://localhost:8080/github"
+    },
+    {
+      "id": 1,
+      "originalUrl": "https://developer.android.com",
+      "shortCode": "Ab3Lt9",
+      "shortUrl": "http://localhost:8080/Ab3Lt9"
+    }
+  ],
+  "pagination": {
+    "page": 0,
+    "size": 25,
+    "totalItems": 2,
+    "totalPages": 1
   }
-]
+}
 ```
 
 ## Project Structure

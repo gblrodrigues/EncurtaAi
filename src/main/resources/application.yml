@@ -27,3 +27,9 @@ server:
 
 app:
   base-url: http://localhost:8080
+
+  pagination:
+    default-size: 25
+    max-size: 200
+    default-sort: createdAt
+    default-direction: DESC

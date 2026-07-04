@@ -1,14 +1,16 @@
 package com.gblrod.encurtaai.service
 
 import com.gblrod.encurtaai.config.AppProperties
-import com.gblrod.encurtaai.dto.CreateLinkRequestDto
-import com.gblrod.encurtaai.dto.LinkResponseDto
-import com.gblrod.encurtaai.dto.UpdateLinkRequestDto
+import com.gblrod.encurtaai.config.PaginationProperties
+import com.gblrod.encurtaai.dto.*
 import com.gblrod.encurtaai.entity.Link
 import com.gblrod.encurtaai.exception.LinkNotFoundException
 import com.gblrod.encurtaai.exception.ShortCodeAlreadyExistsException
 import com.gblrod.encurtaai.extension.toResponse
 import com.gblrod.encurtaai.repository.LinkRepository
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 
@@ -16,7 +18,8 @@ import java.time.OffsetDateTime
 class LinkService(
     private val repository: LinkRepository,
     private val codeGenerator: CodeGenerator,
-    private val appProperties: AppProperties
+    private val appProperties: AppProperties,
+    private val paginationProperties: PaginationProperties
 ) {
     fun create(request: CreateLinkRequestDto): LinkResponseDto {
         val code = generateUniqueCode()
@@ -40,8 +43,22 @@ class LinkService(
         return findEntityByCode(code = code).toResponse(appProperties.baseUrl)
     }
 
-    fun findAll(): List<LinkResponseDto> {
-        return repository.findAll().map { it.toResponse(appProperties.baseUrl) }
+    fun findAll(page: Int?, size: Int?, sort: String?): PageResponseDto<LinkResponseDto> {
+        val currentPage = page ?: 0
+        val currentSize = (size ?: paginationProperties.defaultSize).coerceIn(1, paginationProperties.maxSize)
+        val currentSort = sort ?: "${paginationProperties.defaultSort},${paginationProperties.defaultDirection}"
+
+        val result = repository.findAll(createPageable(currentPage, currentSize, currentSort))
+
+        return PageResponseDto(
+            data = result.content.map { it.toResponse(appProperties.baseUrl) },
+            pagination = PaginationDto(
+                page = result.number,
+                size = result.size,
+                totalItems = result.totalElements,
+                totalPages = result.totalPages
+            )
+        )
     }
 
     fun update(code: String, request: UpdateLinkRequestDto): LinkResponseDto {
@@ -72,5 +89,20 @@ class LinkService(
         } while (repository.existsByShortCode(code))
 
         return code
+    }
+
+    private fun createPageable(page: Int, size: Int, sort: String): Pageable {
+        val parts = sort.split(",")
+        val field = parts.first()
+        val direction = parts.getOrNull(index = 1) ?: paginationProperties.defaultDirection
+
+        return PageRequest.of(
+            page,
+            size.coerceIn(1, paginationProperties.maxSize),
+            Sort.by(
+                Sort.Direction.fromString(direction),
+                field
+            )
+        )
     }
 }
