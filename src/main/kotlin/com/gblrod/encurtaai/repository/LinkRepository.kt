@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface LinkRepository : JpaRepository<Link, Long> {
     fun existsByShortCode(shortCode: String): Boolean
     fun findByShortCode(shortCode: String): Link?
-    override fun findAll(): List<Link>
 }

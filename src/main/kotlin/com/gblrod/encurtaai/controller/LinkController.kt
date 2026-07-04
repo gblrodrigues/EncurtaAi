@@ -2,6 +2,7 @@ package com.gblrod.encurtaai.controller
 
 import com.gblrod.encurtaai.dto.CreateLinkRequestDto
 import com.gblrod.encurtaai.dto.LinkResponseDto
+import com.gblrod.encurtaai.dto.PageResponseDto
 import com.gblrod.encurtaai.dto.UpdateLinkRequestDto
 import com.gblrod.encurtaai.service.LinkService
 import io.swagger.v3.oas.annotations.Operation
@@ -23,8 +24,12 @@ class LinkController(
 
     @Operation(summary = "List all links")
     @GetMapping
-    fun findAll(): List<LinkResponseDto> {
-        return service.findAll()
+    fun findAll(
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) size: Int?,
+        @RequestParam(required = false) sort: String?
+    ): PageResponseDto<LinkResponseDto> {
+        return service.findAll(page, size, sort)
     }
 
     @Operation(summary = "Get link by short code")
