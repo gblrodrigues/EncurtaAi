@@ -6,12 +6,13 @@ import com.gblrod.encurtaai.dto.*
 import com.gblrod.encurtaai.entity.Link
 import com.gblrod.encurtaai.exception.LinkNotFoundException
 import com.gblrod.encurtaai.exception.ShortCodeAlreadyExistsException
-import com.gblrod.encurtaai.extension.toResponse
+import com.gblrod.encurtaai.mapper.toResponse
 import com.gblrod.encurtaai.repository.LinkRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
 
 @Service
@@ -79,6 +80,16 @@ class LinkService(
         val link = findEntityByCode(code)
 
         repository.delete(link)
+    }
+
+    @Transactional
+    fun registerAccess(code: String): Link {
+        val link = findEntityByCode(code)
+
+        link.accessCount++
+        link.lastAccessedAt = OffsetDateTime.now()
+
+        return repository.save(link)
     }
 
     private fun generateUniqueCode(): String {

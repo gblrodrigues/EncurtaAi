@@ -22,5 +22,11 @@ class Link(
     var shortCode: String,
 
     @Column(name = "created_at", nullable = false)
-    var createdAt: OffsetDateTime = OffsetDateTime.now()
+    var createdAt: OffsetDateTime = OffsetDateTime.now(),
+
+    @Column(nullable = false)
+    var accessCount: Long = 0,
+
+    @Column
+    var lastAccessedAt: OffsetDateTime? = null
 )

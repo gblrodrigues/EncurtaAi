@@ -1,12 +1,11 @@
 # EncurtaAi
 
-![API Version](https://img.shields.io/badge/API-v1.0-blue)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.25-7F52FF)](https://kotlinlang.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5.16-6DB33F)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1)](https://www.postgresql.org/)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.9.25-7F52FF.svg?logo=kotlin)](http://kotlinlang.org)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5.16-6DB33F.svg?logo=springboot)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
-EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows users to create, manage and 
-redirect shortened URLs while following common backend development practices such as layered architecture, input validation, 
+EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows users to create, manage and redirect 
+shortened URLs, track access statistics, and follows common backend development practices such as layered architecture, input validation, 
 global exception handling, database migrations and OpenAPI documentation.
 
 * [Technologies Used](#technologies-used)
@@ -39,6 +38,7 @@ Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the
 * Redirect using generated or custom short codes
 * List links with pagination
 * Sort links by creation date
+* Track access count and last access timestamp
 * Retrieve links by short code
 * Update existing links
 * Delete links
@@ -130,7 +130,9 @@ Response
   "id": 1,
   "originalUrl": "https://developer.android.com",
   "shortCode": "Ab3Lt9",
-  "shortUrl": "http://localhost:8080/Ab3Lt9"
+  "shortUrl": "http://localhost:8080/Ab3Lt9",
+  "accessCount": 0,
+  "lastAccessedAt": null
 }
 ```
 
@@ -143,13 +145,17 @@ Response
       "id": 2,
       "originalUrl": "https://github.com/gblrodrigues",
       "shortCode": "github",
-      "shortUrl": "http://localhost:8080/github"
+      "shortUrl": "http://localhost:8080/github",
+      "accessCount": 26,
+      "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
     },
     {
       "id": 1,
       "originalUrl": "https://developer.android.com",
       "shortCode": "Ab3Lt9",
-      "shortUrl": "http://localhost:8080/Ab3Lt9"
+      "shortUrl": "http://localhost:8080/Ab3Lt9",
+      "accessCount": 24,
+      "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
     }
   ],
   "pagination": {
@@ -171,7 +177,7 @@ src/main/kotlin/com/gblrod/encurtaai
 ├── dto
 ├── entity
 ├── exception
-├── extension
+├── mapper
 ├── repository
 ├── service
 └── EncurtaaiApplication.kt

@@ -1,4 +1,4 @@
-package com.gblrod.encurtaai.extension
+package com.gblrod.encurtaai.mapper
 
 import com.gblrod.encurtaai.dto.LinkResponseDto
 import com.gblrod.encurtaai.entity.Link
@@ -8,6 +8,8 @@ fun Link.toResponse(baseUrl: String): LinkResponseDto {
         id = id,
         originalUrl = originalUrl,
         shortCode = shortCode,
-        shortUrl = "$baseUrl/$shortCode"
+        shortUrl = "$baseUrl/$shortCode",
+        accessCount = accessCount,
+        lastAccessedAt = lastAccessedAt
     )
 }
