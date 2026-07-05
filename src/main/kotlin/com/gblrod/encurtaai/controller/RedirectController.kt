@@ -16,7 +16,7 @@ class RedirectController(
     @Operation(summary = "Redirect to original URL")
     @GetMapping("/{code}")
     fun redirect(@PathVariable code: String): ResponseEntity<Void> {
-        val link = service.findEntityByCode(code)
+        val link = service.registerAccess(code)
 
         return ResponseEntity
             .status(HttpStatus.FOUND)
