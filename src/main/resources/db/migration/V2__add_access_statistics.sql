@@ -1,0 +1,5 @@
+ALTER TABLE links
+    ADD COLUMN access_count BIGINT NOT NULL DEFAULT 0;
+
+ALTER TABLE links
+    ADD COLUMN last_accessed_at TIMESTAMP WITH TIME ZONE;
