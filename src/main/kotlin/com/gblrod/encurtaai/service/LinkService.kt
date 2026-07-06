@@ -24,10 +24,15 @@ class LinkService(
 ) {
     fun create(request: CreateLinkRequestDto): LinkResponseDto {
         val code = generateUniqueCode()
+        val shortCode = request.shortCode?.trim()?.takeIf { it.isNotBlank() }
+
+        if (shortCode != null && repository.existsByShortCode(shortCode)) {
+            throw ShortCodeAlreadyExistsException(shortCode)
+        }
 
         val link = Link(
             originalUrl = request.url,
-            shortCode = code,
+            shortCode = shortCode ?: code,
             createdAt = OffsetDateTime.now()
         )
 
