@@ -4,9 +4,10 @@
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5.16-6DB33F.svg?logo=springboot)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
-EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows users to create, manage and redirect 
-shortened URLs, track access statistics, and follows common backend development practices such as layered architecture, input validation, 
-global exception handling, database migrations and OpenAPI documentation.
+EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows users to create, 
+customize, manage and redirect shortened URLs while tracking access statistics shortened URLs, track access statistics, 
+and follows common backend development practices such as layered architecture, input validation, global exception handling, 
+database migrations and OpenAPI documentation.
 
 * [Technologies Used](#technologies-used)
 * [Features](#features)
@@ -34,7 +35,7 @@ Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the
 
 ## Features
 
-* Create shortened URLs
+* Create shortened URLs with optional custom short codes
 * Redirect using generated or custom short codes
 * List links with pagination
 * Sort links by creation date
@@ -115,11 +116,20 @@ GET | `/{code}` | Redirect to the original URL
 
 **POST /api/v1/links**
 
-Request
+Request (automatic short code)
 
 ```json
 {
   "url": "https://developer.android.com"
+}
+```
+
+Request (custom short code)
+
+```json
+{
+  "url": "https://developer.android.com",
+  "shortCode": "devandroid"
 }
 ```
 
@@ -137,7 +147,6 @@ Response
 ```
 
 **GET /api/v1/links**
-
 ```json
 {
   "data": [
@@ -152,8 +161,8 @@ Response
     {
       "id": 1,
       "originalUrl": "https://developer.android.com",
-      "shortCode": "Ab3Lt9",
-      "shortUrl": "http://localhost:8080/Ab3Lt9",
+      "shortCode": "devandroid",
+      "shortUrl": "http://localhost:8080/devandroid",
       "accessCount": 24,
       "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
     }
@@ -173,13 +182,40 @@ Response
 src/main/kotlin/com/gblrod/encurtaai
 │
 ├── config
+│   ├── AppProperties.kt
+│   ├── OpenApiConfig.kt
+│   ├── PaginationProperties.kt
+│
 ├── controller
+│   ├── LinkController.kt
+│   ├── RedirectController.kt
+│
 ├── dto
+│   ├── CreateLinkRequestDto.kt
+│   ├── ErrorResponseDto.kt
+│   ├── LinkResponseDto.kt
+│   ├── PageResponseDto.kt
+│   ├── PaginationDto.kt
+│   ├── UpdateLinkRequestDto.kt
+│
 ├── entity
+│   ├── Link.kt
+│
 ├── exception
+│   ├── GlobalExceptionHandler.kt
+│   ├── LinkNotFoundException.kt
+│   ├── ShortCodeAlreadyExistsException.kt
+│
 ├── mapper
+│   ├── LinkMapper.kt
+│
 ├── repository
+│   ├── LinkRepository.kt
+│
 ├── service
+│   ├── CodeGenerator.kt
+│   ├── LinkService.kt
+│
 └── EncurtaaiApplication.kt
 │
 └── resources
