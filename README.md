@@ -40,13 +40,13 @@ The API is publicly available on Render.
 **Base URL**
 
 ```text
-https://encurtaai-7g31.onrender.com
+https://encurtaai-5q3b.onrender.com
 ```
 
 **Swagger**
 
 ```text
-https://encurtaai-7g31.onrender.com/swagger
+https://encurtaai-5q3b.onrender.com/swagger
 ```
 
 ## Features
@@ -122,7 +122,7 @@ http://localhost:8080/swagger
 ### Production
 
 ```text
-https://encurtaai-7g31.onrender.com/swagger
+https://encurtaai-5q3b.onrender.com/swagger
 ```
 
 ## API Endpoints
@@ -175,7 +175,7 @@ Response
   "id": 1,
   "originalUrl": "https://developer.android.com",
   "shortCode": "devandroid",
-  "shortUrl": "https://encurtaai-7g31.onrender.com/devandroid",
+  "shortUrl": "https://encurtaai-5q3b.onrender.com/devandroid",
   "accessCount": 0,
   "lastAccessedAt": null
 }
@@ -187,9 +187,9 @@ Response
   "data": [
     {
       "id": 2,
-      "originalUrl": "https://github.com/gblrodrigues",
+      "originalUrl": "https://www.linkedin.com/in/gblrodrigues",
       "shortCode": "github",
-      "shortUrl": "https://encurtaai-7g31.onrender.com/github",
+      "shortUrl": "https://encurtaai-5q3b.onrender.com/my-linkedin",
       "accessCount": 26,
       "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
     },
@@ -197,7 +197,7 @@ Response
       "id": 1,
       "originalUrl": "https://developer.android.com",
       "shortCode": "devandroid",
-      "shortUrl": "https://encurtaai-7g31.onrender.com/devandroid",
+      "shortUrl": "https://encurtaai-5q3b.onrender.com/devandroid",
       "accessCount": 24,
       "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
     }
