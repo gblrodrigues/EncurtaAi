@@ -3,9 +3,9 @@ spring:
     name: encurtaai
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/encurtaai
-    username: postgres
-    password: postgres
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/encurtaai}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
 
   jpa:
     hibernate:
@@ -26,7 +26,7 @@ server:
   port: 8080
 
 app:
-  base-url: http://localhost:8080
+  base-url: ${APP_BASE_URL:http://localhost:8080}
 
   pagination:
     default-size: 25

@@ -6,12 +6,13 @@
 
 EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows users to create, 
 customize, manage and redirect shortened URLs while tracking access statistics shortened URLs, track access statistics, 
-and follows common backend development practices such as layered architecture, input validation, global exception handling, 
-database migrations and OpenAPI documentation.
+and follows common backend development practices such as layered architecture, input validation, global exception 
+handling, database migrations and OpenAPI documentation and cloud deployment with Render.
 
 * [Technologies Used](#technologies-used)
+* [Live API](#live-api)
 * [Features](#features)
-* [Running the Project](#running-the-project)
+* [Running Locally](#running-locally)
 * [API Documentation](#api-documentation)
 * [API Endpoints](#api-endpoints)
 * [Example Requests and Responses](#example-requests-and-responses)
@@ -31,7 +32,23 @@ Database Migrations | [![Flyway](https://img.shields.io/badge/Flyway-CC0200?styl
 Validation | [![Bean Validation](https://img.shields.io/badge/Bean_Validation-2496ED?style=for-the-badge)](https://beanvalidation.org/) | Request validation |
 Documentation UI | [![Swagger UI](https://img.shields.io/badge/Swagger_UI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://swagger.io/tools/swagger-ui/) | Interactive API documentation
 Build System | [![Gradle Kotlin DSL](https://img.shields.io/badge/Gradle-Kotlin_DSL-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/) | Build automation
-Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/) | Local PostgreSQL environment
+Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/) | Containerized application and local development
+Deployment | [![Render](https://img.shields.io/badge/Render-black?style=for-the-badge&logo=render&logoColor=46E3B7)](https://render.com) | Cloud hosting and application deployment
+
+## Live API
+The API is publicly available on Render.
+
+**Base URL**
+
+```text
+https://encurtaai-7g31.onrender.com
+```
+
+**Swagger**
+
+```text
+https://encurtaai-7g31.onrender.com/swagger
+```
 
 ## Features
 
@@ -49,7 +66,7 @@ Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the
 * OpenAPI documentation with Swagger UI
 * Database migrations with Flyway
 
-## Running the Project
+## Running Locally
 
 Clone the repository:
 
@@ -87,8 +104,16 @@ http://localhost:8080
 
 Swagger UI is available at:
 
+### Local
+
 ```text
 http://localhost:8080/swagger
+```
+
+### Production
+
+```text
+https://encurtaai-7g31.onrender.com/swagger
 ```
 
 ## API Endpoints
@@ -139,8 +164,8 @@ Response
 {
   "id": 1,
   "originalUrl": "https://developer.android.com",
-  "shortCode": "Ab3Lt9",
-  "shortUrl": "http://localhost:8080/Ab3Lt9",
+  "shortCode": "devandroid",
+  "shortUrl": "https://encurtaai-7g31.onrender.com/devandroid",
   "accessCount": 0,
   "lastAccessedAt": null
 }
@@ -154,7 +179,7 @@ Response
       "id": 2,
       "originalUrl": "https://github.com/gblrodrigues",
       "shortCode": "github",
-      "shortUrl": "http://localhost:8080/github",
+      "shortUrl": "https://encurtaai-7g31.onrender.com/github",
       "accessCount": 26,
       "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
     },
@@ -162,7 +187,7 @@ Response
       "id": 1,
       "originalUrl": "https://developer.android.com",
       "shortCode": "devandroid",
-      "shortUrl": "http://localhost:8080/devandroid",
+      "shortUrl": "https://encurtaai-7g31.onrender.com/devandroid",
       "accessCount": 24,
       "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
     }
