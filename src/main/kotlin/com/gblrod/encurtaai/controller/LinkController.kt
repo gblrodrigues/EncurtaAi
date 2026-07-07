@@ -6,6 +6,7 @@ import com.gblrod.encurtaai.dto.PageResponseDto
 import com.gblrod.encurtaai.dto.UpdateLinkRequestDto
 import com.gblrod.encurtaai.service.LinkService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -16,6 +17,7 @@ class LinkController(
     private val service: LinkService
 ) {
     @Operation(summary = "Create a shortened URL")
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     fun create(@RequestBody @Valid request: CreateLinkRequestDto): LinkResponseDto {
@@ -39,12 +41,14 @@ class LinkController(
     }
 
     @Operation(summary = "Update a link")
+    @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{code}")
     fun update(@PathVariable code: String, @RequestBody @Valid request: UpdateLinkRequestDto): LinkResponseDto {
         return service.update(code, request)
     }
 
     @Operation(summary = "Delete a link")
+    @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping("/{code}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable code: String) {
