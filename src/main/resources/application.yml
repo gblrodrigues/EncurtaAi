@@ -33,3 +33,12 @@ app:
     max-size: 200
     default-sort: createdAt
     default-direction: DESC
+
+security:
+  admin:
+    username: ${ADMIN_USERNAME}
+    password-hash: ${ADMIN_PASSWORD_HASH}
+
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION:3600000}
