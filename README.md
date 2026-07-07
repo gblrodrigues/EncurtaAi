@@ -4,10 +4,8 @@
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5.16-6DB33F.svg?logo=springboot)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
-EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows users to create, 
-customize, manage and redirect shortened URLs while tracking access statistics shortened URLs, track access statistics, 
-and follows common backend development practices such as layered architecture, input validation, global exception 
-handling, database migrations and OpenAPI documentation and cloud deployment with Render.
+EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows administrators to create, customize and 
+manage shortened URLs through JWT authentication while providing public access to redirects and link queries.
 
 * [Technologies Used](#technologies-used)
 * [Live API](#live-api)
@@ -16,6 +14,7 @@ handling, database migrations and OpenAPI documentation and cloud deployment wit
 * [API Documentation](#api-documentation)
 * [API Endpoints](#api-endpoints)
 * [Example Requests and Responses](#example-requests-and-responses)
+* [Authentication](#authentication)
 * [Project Structure](#project-structure)
 * [Architecture](#architecture)
 * [My Contact](#my-contact)
@@ -41,32 +40,42 @@ The API is publicly available on Render.
 **Base URL**
 
 ```text
-https://encurtaai-7g31.onrender.com
+https://encurtaai-5q3b.onrender.com
 ```
 
 **Swagger**
 
 ```text
-https://encurtaai-7g31.onrender.com/swagger
+https://encurtaai-5q3b.onrender.com/swagger
 ```
 
 ## Features
 
-* Create shortened URLs with optional custom short codes
-* Redirect using generated or custom short codes
-* List links with pagination
-* Sort links by creation date
-* Track access count and last access timestamp
-* Retrieve links by short code
-* Update existing links
-* Delete links
+* JWT-based authentication for protected operations
+* Admin-only access for creating, updating and deleting links
+* Public redirect access using generated short codes
+* Public link retrieval by short code
+* Public paginated link listing
+* Custom short codes support
 * Automatic unique short code generation
+* Access count and last access timestamp tracking
 * Request validation
 * Standardized error responses
 * OpenAPI documentation with Swagger UI
 * Database migrations with Flyway
 
 ## Running Locally
+Copy the environment variables from `.env.example` and configure your local values before starting the application.
+
+```env
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD_HASH=<bcrypt_hash>
+JWT_SECRET=change_this_secret_with_at_least_32_characters
+JWT_EXPIRATION=3600000
+DATABASE_URL=jdbc:postgresql://localhost:5432/encurtaai
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+```
 
 Clone the repository:
 
@@ -113,19 +122,20 @@ http://localhost:8080/swagger
 ### Production
 
 ```text
-https://encurtaai-7g31.onrender.com/swagger
+https://encurtaai-5q3b.onrender.com/swagger
 ```
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|----------|------------|-----|
-POST | `/api/v1/links` | Create a shortened URL
-GET | `/api/v1/links` | List all links (paginated)
-GET | `/api/v1/links/{code}` | Retrieve a link by short code
-PUT | `/api/v1/links/{code}` | Update a link
-DELETE | `/api/v1/links/{code}` | Delete a link
-GET | `/{code}` | Redirect to the original URL
+| Method | Endpoint | Access | Description |
+|----------|------------|-----|-----|
+POST | `/api/v1/links` | Admin | Create a shortened URL
+GET | `/api/v1/links` | Public | List all links
+GET | `/api/v1/links/{code}` | Public | Retrieve a link by short code
+PUT | `/api/v1/links/{code}` | Admin | Update a link
+DELETE | `/api/v1/links/{code}` | Admin | Delete a link
+GET | `/{code}` | Public | Redirect to the original URL
+POST | `/api/v1/auth/login` | Public | Authenticate administrator and generate JWT token
 
 ### Pagination
 
@@ -165,7 +175,7 @@ Response
   "id": 1,
   "originalUrl": "https://developer.android.com",
   "shortCode": "devandroid",
-  "shortUrl": "https://encurtaai-7g31.onrender.com/devandroid",
+  "shortUrl": "https://encurtaai-5q3b.onrender.com/devandroid",
   "accessCount": 0,
   "lastAccessedAt": null
 }
@@ -177,9 +187,9 @@ Response
   "data": [
     {
       "id": 2,
-      "originalUrl": "https://github.com/gblrodrigues",
+      "originalUrl": "https://www.linkedin.com/in/gblrodrigues",
       "shortCode": "github",
-      "shortUrl": "https://encurtaai-7g31.onrender.com/github",
+      "shortUrl": "https://encurtaai-5q3b.onrender.com/my-linkedin",
       "accessCount": 26,
       "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
     },
@@ -187,7 +197,7 @@ Response
       "id": 1,
       "originalUrl": "https://developer.android.com",
       "shortCode": "devandroid",
-      "shortUrl": "https://encurtaai-7g31.onrender.com/devandroid",
+      "shortUrl": "https://encurtaai-5q3b.onrender.com/devandroid",
       "accessCount": 24,
       "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
     }
@@ -201,6 +211,23 @@ Response
 }
 ```
 
+## Authentication
+Protected endpoints require a JWT Bearer token.
+
+First, authenticate using:
+
+**POST /api/v1/auth/login**
+
+Response:
+
+```json
+{
+  "accessToken": "jwt-token",
+  "tokenType": "Bearer",
+  "expiresIn": 3600
+}
+```
+
 ## Project Structure
 
 ```text
@@ -208,10 +235,15 @@ src/main/kotlin/com/gblrod/encurtaai
 │
 ├── config
 │   ├── AppProperties.kt
+│   ├── JwtProperties.kt
 │   ├── OpenApiConfig.kt
 │   ├── PaginationProperties.kt
+│   ├── PasswordConfig.kt
+│   ├── SecurityConfig.kt
+│   ├── SecurityProperties.kt
 │
 ├── controller
+│   ├── AuthController.kt
 │   ├── LinkController.kt
 │   ├── RedirectController.kt
 │
@@ -219,6 +251,8 @@ src/main/kotlin/com/gblrod/encurtaai
 │   ├── CreateLinkRequestDto.kt
 │   ├── ErrorResponseDto.kt
 │   ├── LinkResponseDto.kt
+│   ├── LoginRequestDto.kt
+│   ├── LoginResponseDto.kt
 │   ├── PageResponseDto.kt
 │   ├── PaginationDto.kt
 │   ├── UpdateLinkRequestDto.kt
@@ -237,7 +271,12 @@ src/main/kotlin/com/gblrod/encurtaai
 ├── repository
 │   ├── LinkRepository.kt
 │
+├── security
+│   ├── JwtAuthenticationFilter.kt
+│   ├── JwtService.kt
+|
 ├── service
+│   ├── AuthService.kt
 │   ├── CodeGenerator.kt
 │   ├── LinkService.kt
 │
@@ -253,6 +292,8 @@ src/main/kotlin/com/gblrod/encurtaai
 ```text
 Client
    ↓
+JWT Authentication Filter
+   ↓
 Controllers
    ↓
 Services
@@ -262,6 +303,7 @@ Repositories (Spring Data JPA)
 PostgreSQL
 
 Validation: Bean Validation
+Security: Spring Security + JWT
 Documentation: OpenAPI / Swagger
 Database migrations: Flyway
 ```
