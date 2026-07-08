@@ -28,26 +28,26 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16")
 
-    // Jackson
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-    // Flyway
+    // Database
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
+    runtimeOnly("org.postgresql:postgresql")
 
-    // kotlin
+    // Bucket4j (RateLimiter)
+    implementation("com.bucket4j:bucket4j_jdk17-core:8.14.0")
+
+    // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-
-    // jjwt
-    implementation("io.jsonwebtoken:jjwt-api:0.12.7")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-    // PostgreSql / jjwt
-    runtimeOnly("org.postgresql:postgresql")
+    // Jwt
+    implementation("io.jsonwebtoken:jjwt-api:0.12.7")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.7")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.7")
 
+    // Tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
