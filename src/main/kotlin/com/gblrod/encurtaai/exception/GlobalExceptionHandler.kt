@@ -69,7 +69,6 @@ class GlobalExceptionHandler {
     fun handleException(
         request: HttpServletRequest
     ): ResponseEntity<ErrorResponseDto> {
-
         return buildErrorResponse(
             status = HttpStatus.INTERNAL_SERVER_ERROR,
             message = "An unexpected error occurred.",

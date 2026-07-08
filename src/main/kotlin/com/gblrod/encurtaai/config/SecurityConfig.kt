@@ -1,6 +1,7 @@
 package com.gblrod.encurtaai.config
 
 import com.gblrod.encurtaai.security.JwtAuthenticationFilter
+import com.gblrod.encurtaai.security.RateLimitFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -11,7 +12,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 class SecurityConfig(
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val rateLimitFilter: RateLimitFilter
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -44,6 +46,11 @@ class SecurityConfig(
 
                 it.anyRequest().authenticated()
             }
+
+        http.addFilterBefore(
+            rateLimitFilter,
+            UsernamePasswordAuthenticationFilter::class.java
+        )
 
         http.addFilterBefore(
             jwtAuthenticationFilter,
