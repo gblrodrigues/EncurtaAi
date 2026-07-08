@@ -15,6 +15,7 @@ manage shortened URLs through JWT authentication while providing public access t
 * [API Endpoints](#api-endpoints)
 * [Example Requests and Responses](#example-requests-and-responses)
 * [Authentication](#authentication)
+* [Rate Limiting](#rate-limiting)
 * [Project Structure](#project-structure)
 * [Architecture](#architecture)
 * [My Contact](#my-contact)
@@ -28,11 +29,12 @@ Framework | [![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?styl
 Persistence | [![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-data-jpa) | ORM and database access
 Database | [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/) | Persistent data storage
 Database Migrations | [![Flyway](https://img.shields.io/badge/Flyway-CC0200?style=for-the-badge&logo=flyway&logoColor=white)](https://documentation.red-gate.com/flyway/) | Versioned database schema
-Validation | [![Bean Validation](https://img.shields.io/badge/Bean_Validation-2496ED?style=for-the-badge)](https://beanvalidation.org/) | Request validation |
+Validation | [![Bean Validation](https://img.shields.io/badge/Bean_Validation-2496ED?style=for-the-badge)](https://beanvalidation.org/) | Request validation
 Documentation UI | [![Swagger UI](https://img.shields.io/badge/Swagger_UI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://swagger.io/tools/swagger-ui/) | Interactive API documentation
 Build System | [![Gradle Kotlin DSL](https://img.shields.io/badge/Gradle-Kotlin_DSL-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/) | Build automation
 Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/) | Containerized application and local development
 Deployment | [![Render](https://img.shields.io/badge/Render-black?style=for-the-badge&logo=render&logoColor=46E3B7)](https://render.com) | Cloud hosting and application deployment
+Rate Limiting | [![Bucket4j](https://img.shields.io/badge/Bucket4j-8A2BE2?style=for-the-badge)](https://github.com/bucket4j/bucket4j) | Global request rate limiting
 
 ## Live API
 The API is publicly available on Render.
@@ -53,6 +55,7 @@ https://encurtaai-5q3b.onrender.com/swagger
 
 * JWT-based authentication for protected operations
 * Admin-only access for creating, updating and deleting links
+* Global rate limiting (500 requests/hour) with Bucket4j
 * Public redirect access using generated short codes
 * Public link retrieval by short code
 * Public paginated link listing
@@ -188,7 +191,7 @@ Response
     {
       "id": 2,
       "originalUrl": "https://www.linkedin.com/in/gblrodrigues",
-      "shortCode": "github",
+      "shortCode": "my-linkedin",
       "shortUrl": "https://encurtaai-5q3b.onrender.com/my-linkedin",
       "accessCount": 26,
       "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
@@ -228,6 +231,32 @@ Response:
 }
 ```
 
+## Rate Limiting
+All requests are protected by a global rate limiter powered by [Bucket4j](https://github.com/bucket4j/bucket4j).
+
+| Limit | Window |
+|----------|------------|
+500 requests | 1 hour
+
+When the limit is exceeded, the API returns:
+
+```json
+{
+  "timestamp": "2026-07-08T19:32:01.9694698-03:00",
+  "status": 429,
+  "error": "Too Many Requests",
+  "message": "Rate limit exceeded. Try again in 59 minutes and 30 seconds.",
+  "path": "/api/v1/links"
+}
+```
+
+The response also includes the following headers:
+| Header | Description | 
+|----------|------------|
+X-RateLimit-Limit	| Maximum number of requests
+X-RateLimit-Remaining	| Remaining requests in the current window
+Retry-After	| Seconds until requests are allowed again
+
 ## Project Structure
 
 ```text
@@ -239,6 +268,7 @@ src/main/kotlin/com/gblrod/encurtaai
 │   ├── OpenApiConfig.kt
 │   ├── PaginationProperties.kt
 │   ├── PasswordConfig.kt
+│   ├── RateLimitConfig.kt
 │   ├── SecurityConfig.kt
 │   ├── SecurityProperties.kt
 │
@@ -274,11 +304,13 @@ src/main/kotlin/com/gblrod/encurtaai
 ├── security
 │   ├── JwtAuthenticationFilter.kt
 │   ├── JwtService.kt
+│   ├── RateLimitFilter.kt
 |
 ├── service
 │   ├── AuthService.kt
 │   ├── CodeGenerator.kt
 │   ├── LinkService.kt
+│   ├── RateLimitService.kt
 │
 └── EncurtaaiApplication.kt
 │
@@ -292,6 +324,8 @@ src/main/kotlin/com/gblrod/encurtaai
 ```text
 Client
    ↓
+Rate Limit Filter
+   ↓
 JWT Authentication Filter
    ↓
 Controllers
@@ -303,6 +337,7 @@ Repositories (Spring Data JPA)
 PostgreSQL
 
 Validation: Bean Validation
+Rate limiting: Bucket4j
 Security: Spring Security + JWT
 Documentation: OpenAPI / Swagger
 Database migrations: Flyway
