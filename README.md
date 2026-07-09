@@ -4,8 +4,8 @@
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5.16-6DB33F.svg?logo=springboot)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
-EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows administrators to create, customize and 
-manage shortened URLs through JWT authentication while providing public access to redirects and link queries.
+EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows administrators to 
+create, customize and manage shortened URLs through JWT authentication while providing public access to redirects and link queries.
 
 * [Technologies Used](#technologies-used)
 * [Live API](#live-api)
@@ -34,7 +34,7 @@ Documentation UI | [![Swagger UI](https://img.shields.io/badge/Swagger_UI-85EA2D
 Build System | [![Gradle Kotlin DSL](https://img.shields.io/badge/Gradle-Kotlin_DSL-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/) | Build automation
 Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/) | Containerized application and local development
 Deployment | [![Render](https://img.shields.io/badge/Render-black?style=for-the-badge&logo=render&logoColor=46E3B7)](https://render.com) | Cloud hosting and application deployment
-Rate Limiting | [![Bucket4j](https://img.shields.io/badge/Bucket4j-8A2BE2?style=for-the-badge)](https://github.com/bucket4j/bucket4j) | Global request rate limiting
+Rate Limiting | [![Bucket4j](https://img.shields.io/badge/Bucket4j-8A2BE2?style=for-the-badge)](https://github.com/bucket4j/bucket4j) | Per IP request rate limiting
 
 ## Live API
 The API is publicly available on Render.
@@ -55,7 +55,7 @@ https://encurtaai-5q3b.onrender.com/swagger
 
 * JWT-based authentication for protected operations
 * Admin-only access for creating, updating and deleting links
-* Global rate limiting (500 requests/hour) with Bucket4j
+* Per-IP rate limiting (500 requests/hour) with Bucket4j
 * Public redirect access using generated short codes
 * Public link retrieval by short code
 * Public paginated link listing
@@ -232,7 +232,8 @@ Response:
 ```
 
 ## Rate Limiting
-All requests are protected by a global rate limiter powered by [Bucket4j](https://github.com/bucket4j/bucket4j).
+All requests are protected by a per-IP rate limiter powered by [Bucket4j](https://github.com/bucket4j/bucket4j).
+Each client IP has its own independent bucket with a limit of 500 requests per hour.
 
 | Limit | Window |
 |----------|------------|
@@ -337,7 +338,7 @@ Repositories (Spring Data JPA)
 PostgreSQL
 
 Validation: Bean Validation
-Rate limiting: Bucket4j
+Rate limiting: Bucket4j (per IP)
 Security: Spring Security + JWT
 Documentation: OpenAPI / Swagger
 Database migrations: Flyway
