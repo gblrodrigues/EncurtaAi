@@ -27,7 +27,12 @@ class RateLimitFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val probe = rateLimitService.tryConsume()
+        val clientIp = request.getHeader("X-Forwarded-For")
+            ?.split(",")
+            ?.first()
+            ?.trim()
+            ?: request.remoteAddr
+        val probe = rateLimitService.tryConsume(ip = clientIp)
 
         response.setHeader(HEADER_LIMIT, "$MAX_REQUESTS")
         response.setHeader(HEADER_REMAINING, "${probe.remainingTokens}")
