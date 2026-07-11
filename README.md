@@ -303,6 +303,7 @@ src/main/kotlin/com/gblrod/encurtaai
 │   ├── LinkRepository.kt
 │
 ├── security
+│   ├── CustomAuthenticationEntryPoint.kt
 │   ├── JwtAuthenticationFilter.kt
 │   ├── JwtService.kt
 │   ├── RateLimitFilter.kt
