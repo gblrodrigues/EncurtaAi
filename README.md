@@ -1,8 +1,9 @@
 # EncurtaAi
 
-[![Kotlin](https://img.shields.io/badge/kotlin-1.9.25-7F52FF.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.4.21-7F52FF.svg?logo=kotlin)](https://kotlinlang.org)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5.16-6DB33F.svg?logo=springboot)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![JUnit 5](https://img.shields.io/badge/JUnit-5-25A162.svg?logo=junit5&logoColor=white)](https://junit.org/junit5/)
 
 EncurtaAi is a RESTful URL shortening API built with Kotlin, Spring Boot and PostgreSQL. It allows administrators to 
 create, customize and manage shortened URLs through JWT authentication while providing public access to redirects and link queries.
@@ -11,6 +12,7 @@ create, customize and manage shortened URLs through JWT authentication while pro
 * [Live API](#live-api)
 * [Features](#features)
 * [Running Locally](#running-locally)
+* [Testing](#testing)
 * [API Documentation](#api-documentation)
 * [API Endpoints](#api-endpoints)
 * [Example Requests and Responses](#example-requests-and-responses)
@@ -29,6 +31,7 @@ Framework | [![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?styl
 Persistence | [![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-data-jpa) | ORM and database access
 Database | [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/) | Persistent data storage
 Database Migrations | [![Flyway](https://img.shields.io/badge/Flyway-CC0200?style=for-the-badge&logo=flyway&logoColor=white)](https://documentation.red-gate.com/flyway/) | Versioned database schema
+Testing | [![JUnit 5](https://img.shields.io/badge/JUnit-5-25A162?style=for-the-badge&logo=junit5&logoColor=white)](https://junit.org/junit5/) [![Mockito](https://img.shields.io/badge/Mockito-Testing-78A641?style=for-the-badge)](https://site.mockito.org/) | Unit testing and HTTP security integration testing
 Validation | [![Bean Validation](https://img.shields.io/badge/Bean_Validation-2496ED?style=for-the-badge)](https://beanvalidation.org/) | Request validation
 Documentation UI | [![Swagger UI](https://img.shields.io/badge/Swagger_UI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://swagger.io/tools/swagger-ui/) | Interactive API documentation
 Build System | [![Gradle Kotlin DSL](https://img.shields.io/badge/Gradle-Kotlin_DSL-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/) | Build automation
@@ -68,17 +71,6 @@ https://encurtaai-5q3b.onrender.com/swagger
 * Database migrations with Flyway
 
 ## Running Locally
-Copy the environment variables from `.env.example` and configure your local values before starting the application.
-
-```env
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD_HASH=<bcrypt_hash>
-JWT_SECRET=change_this_secret_with_at_least_32_characters
-JWT_EXPIRATION=3600000
-DATABASE_URL=jdbc:postgresql://localhost:5432/encurtaai
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=postgres
-```
 
 Clone the repository:
 
@@ -90,6 +82,19 @@ Navigate to the project folder:
 
 ```bash
 cd encurtaai
+```
+
+Configure the required environment variables from `.env.example` in your IDE or terminal before starting the application. 
+> **Spring Boot does not load .env files automatically.**
+
+```env
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD_HASH=<bcrypt_hash>
+JWT_SECRET=change_this_secret_with_at_least_32_characters
+JWT_EXPIRATION=3600000
+DATABASE_URL=jdbc:postgresql://localhost:5432/encurtaai
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
 ```
 
 Start PostgreSQL:
@@ -111,6 +116,47 @@ The API will be available at:
 ```text
 http://localhost:8080
 ```
+
+## Testing
+
+The project includes unit tests and HTTP security integration tests to validate core application behavior.
+
+**Covered scenarios**
+* Authentication with valid and invalid credentials.
+* Link creation with generated and custom short codes.
+* Duplicate custom short code rejection.
+* Retry behavior when a generated short code already exists.
+* Access count and last access timestamp updates.
+* Rate limiting and independent request limits per IP.
+* HTTP authorization behavior with and without a valid JWT.
+
+**Run tests locally**
+
+Start the PostgreSQL container:
+
+```bash
+docker compose up -d
+```
+
+Create the dedicated test database once:
+
+```bash
+docker exec -it encurtaai-postgres psql -U postgres -d postgres -c "CREATE DATABASE encurtaai_test;"
+```
+
+Run the test suite:
+
+```bash
+./gradlew test
+```
+
+On Windows PowerShell, use:
+
+```powershell
+.\gradlew.bat test
+```
+
+The integration tests use the `test` Spring profile and the dedicated `encurtaai_test` database. Production database credentials must not be used for automated tests.
 
 ## API Documentation
 
@@ -194,7 +240,7 @@ Response
       "shortCode": "my-linkedin",
       "shortUrl": "https://encurtaai-5q3b.onrender.com/my-linkedin",
       "accessCount": 26,
-      "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
+      "lastAccessedAt": "2026-10-14T15:04:51.548475Z"
     },
     {
       "id": 1,
@@ -202,7 +248,7 @@ Response
       "shortCode": "devandroid",
       "shortUrl": "https://encurtaai-5q3b.onrender.com/devandroid",
       "accessCount": 24,
-      "lastAccessedAt": "2026-07-05T15:04:51.548475Z"
+      "lastAccessedAt": "2026-10-14T15:04:51.548475Z"
     }
   ],
   "pagination": {
@@ -243,7 +289,7 @@ When the limit is exceeded, the API returns:
 
 ```json
 {
-  "timestamp": "2026-07-08T19:32:01.9694698-03:00",
+  "timestamp": "2026-10-14T19:32:01.9694698-03:00",
   "status": 429,
   "error": "Too Many Requests",
   "message": "Rate limit exceeded. Try again in 59 minutes and 30 seconds.",
@@ -261,64 +307,31 @@ Retry-After	| Seconds until requests are allowed again
 ## Project Structure
 
 ```text
-src/main/kotlin/com/gblrod/encurtaai
-│
-├── config
-│   ├── AppProperties.kt
-│   ├── JwtProperties.kt
-│   ├── OpenApiConfig.kt
-│   ├── PaginationProperties.kt
-│   ├── PasswordConfig.kt
-│   ├── RateLimitConfig.kt
-│   ├── SecurityConfig.kt
-│   ├── SecurityProperties.kt
-│
-├── controller
-│   ├── AuthController.kt
-│   ├── LinkController.kt
-│   ├── RedirectController.kt
-│
-├── dto
-│   ├── CreateLinkRequestDto.kt
-│   ├── ErrorResponseDto.kt
-│   ├── LinkResponseDto.kt
-│   ├── LoginRequestDto.kt
-│   ├── LoginResponseDto.kt
-│   ├── PageResponseDto.kt
-│   ├── PaginationDto.kt
-│   ├── UpdateLinkRequestDto.kt
-│
-├── entity
-│   ├── Link.kt
-│
-├── exception
-│   ├── GlobalExceptionHandler.kt
-│   ├── LinkNotFoundException.kt
-│   ├── ShortCodeAlreadyExistsException.kt
-│
-├── mapper
-│   ├── LinkMapper.kt
-│
-├── repository
-│   ├── LinkRepository.kt
-│
-├── security
-│   ├── CustomAuthenticationEntryPoint.kt
-│   ├── JwtAuthenticationFilter.kt
-│   ├── JwtService.kt
-│   ├── RateLimitFilter.kt
-|
-├── service
-│   ├── AuthService.kt
-│   ├── CodeGenerator.kt
-│   ├── LinkService.kt
-│   ├── RateLimitService.kt
-│
-└── EncurtaaiApplication.kt
-│
-└── resources
-    └── db
-        └── migration
+src/
+├── main/
+│   ├── kotlin/com/gblrod/encurtaai/
+│   │   ├── config/
+│   │   ├── controller/
+│   │   ├── dto/
+│   │   ├── entity/
+│   │   ├── exception/
+│   │   ├── mapper/
+│   │   ├── repository/
+│   │   ├── security/
+│   │   ├── service/
+│   │   └── EncurtaaiApplication.kt
+│   └── resources/
+│       └── db/migration/
+└── test/
+    ├── kotlin/com/gblrod/encurtaai/
+    │   ├── security/
+    │   │   └── LinkSecurityIntegrationTest.kt
+    │   └── service/
+    │       ├── AuthServiceTest.kt
+    │       ├── LinkServiceTest.kt
+    │       └── RateLimitServiceTest.kt
+    └── resources/
+        └── application-test.yml
 ```
 
 ## Architecture
@@ -346,5 +359,6 @@ Database migrations: Flyway
 ```
 
 ## My Contact
-
-🔗 [LinkedIn](https://www.linkedin.com/in/gblrodrigues/)
+<a href="https://www.linkedin.com/in/gblrodrigues">
+  <img src="https://img.shields.io/badge/LinkedIn-100%2B-0077B5?style=flat&logo=linkedin&logoColor=white" alt="My LinkedIn Profile"/>
+</a>
