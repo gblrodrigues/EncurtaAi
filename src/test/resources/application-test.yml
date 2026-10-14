@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: encurtaai
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/encurtaai_test
+    username: postgres
+    password: postgres
+
+  flyway:
+    enabled: true
+
+app:
+  base-url: http://localhost:8080
+
+  pagination:
+    default-size: 25
+    max-size: 200
+    default-sort: createdAt
+    default-direction: DESC
+
+security:
+  admin:
+    username: test-admin
+    password-hash: "test-only-placeholder"
+
+  jwt:
+    secret: "local-test-only-secret-with-at-least-32-bytes"
+    expiration: 3600000
