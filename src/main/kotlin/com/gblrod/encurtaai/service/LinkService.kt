@@ -23,21 +23,24 @@ class LinkService(
     private val paginationProperties: PaginationProperties
 ) {
     fun create(request: CreateLinkRequestDto): LinkResponseDto {
-        val code = generateUniqueCode()
         val shortCode = request.shortCode?.trim()?.takeIf { it.isNotBlank() }
+        val code = if (shortCode != null) {
+            if (repository.existsByShortCode(shortCode)) {
+                throw ShortCodeAlreadyExistsException(shortCode)
+            }
 
-        if (shortCode != null && repository.existsByShortCode(shortCode)) {
-            throw ShortCodeAlreadyExistsException(shortCode)
+            shortCode
+        } else {
+            generateUniqueCode()
         }
 
         val link = Link(
             originalUrl = request.url,
-            shortCode = shortCode ?: code,
+            shortCode = code,
             createdAt = OffsetDateTime.now()
         )
 
         val saved = repository.save(link)
-
         return saved.toResponse(appProperties.baseUrl)
     }
 
