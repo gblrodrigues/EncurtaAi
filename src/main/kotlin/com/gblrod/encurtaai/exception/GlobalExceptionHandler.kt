@@ -4,9 +4,12 @@ import com.gblrod.encurtaai.dto.ErrorResponseDto
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 import java.time.OffsetDateTime
 
@@ -61,6 +64,36 @@ class GlobalExceptionHandler {
         return buildErrorResponse(
             status = HttpStatus.BAD_REQUEST,
             message = message,
+            path = request.requestURI
+        )
+    }
+
+    @ExceptionHandler(BadCredentialsException::class)
+    fun handleBadCredentials(request: HttpServletRequest): ResponseEntity<ErrorResponseDto> {
+        return buildErrorResponse(
+            status = HttpStatus.UNAUTHORIZED,
+            message = "Invalid username or password.",
+            path = request.requestURI
+        )
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadable(request: HttpServletRequest): ResponseEntity<ErrorResponseDto> {
+        return buildErrorResponse(
+            status = HttpStatus.BAD_REQUEST,
+            message = "Request body is missing or contains invalid JSON.",
+            path = request.requestURI
+        )
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handleMethodArgumentTypeMismatch(
+        exception: MethodArgumentTypeMismatchException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponseDto> {
+        return buildErrorResponse(
+            status = HttpStatus.BAD_REQUEST,
+            message = "Parameter '${exception.name}' has an invalid value.",
             path = request.requestURI
         )
     }

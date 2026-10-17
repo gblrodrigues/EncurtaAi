@@ -26,18 +26,18 @@ create, customize and manage shortened URLs through JWT authentication while pro
 
 | Category | Technology | Why |
 |----------|------------|-----|
-Language | [![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org/) | Main development language (my favorite 💜)
-Framework | [![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot) | REST API framework
-Persistence | [![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-data-jpa) | ORM and database access
-Database | [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/) | Persistent data storage
-Database Migrations | [![Flyway](https://img.shields.io/badge/Flyway-CC0200?style=for-the-badge&logo=flyway&logoColor=white)](https://documentation.red-gate.com/flyway/) | Versioned database schema
-Testing | [![JUnit 5](https://img.shields.io/badge/JUnit-5-25A162?style=for-the-badge&logo=junit5&logoColor=white)](https://junit.org/junit5/) [![Mockito](https://img.shields.io/badge/Mockito-Testing-78A641?style=for-the-badge)](https://site.mockito.org/) | Unit testing and HTTP security integration testing
-Validation | [![Bean Validation](https://img.shields.io/badge/Bean_Validation-2496ED?style=for-the-badge)](https://beanvalidation.org/) | Request validation
-Documentation UI | [![Swagger UI](https://img.shields.io/badge/Swagger_UI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://swagger.io/tools/swagger-ui/) | Interactive API documentation
-Build System | [![Gradle Kotlin DSL](https://img.shields.io/badge/Gradle-Kotlin_DSL-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/) | Build automation
-Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/) | Containerized application and local development
-Deployment | [![Render](https://img.shields.io/badge/Render-black?style=for-the-badge&logo=render&logoColor=46E3B7)](https://render.com) | Cloud hosting and application deployment
-Rate Limiting | [![Bucket4j](https://img.shields.io/badge/Bucket4j-8A2BE2?style=for-the-badge)](https://github.com/bucket4j/bucket4j) | Per IP request rate limiting
+Language | [![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)](https://kotlinlang.org/) | Main development language (my favorite 💜)
+Framework | [![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot) | REST API framework
+Persistence | [![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?style=flat&logo=spring&logoColor=white)](https://spring.io/projects/spring-data-jpa) | ORM and database access
+Database | [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/) | Persistent data storage
+Database Migrations | [![Flyway](https://img.shields.io/badge/Flyway-CC0200?style=flat&logo=flyway&logoColor=white)](https://documentation.red-gate.com/flyway/) | Versioned database schema
+Testing | [![JUnit 5](https://img.shields.io/badge/JUnit-5-25A162?style=flat&logo=junit5&logoColor=white)](https://junit.org/junit5/) [![Mockito](https://img.shields.io/badge/Mockito-78A641?style=flat)](https://site.mockito.org/) | Unit testing and HTTP security integration testing
+Validation | [![Bean Validation](https://img.shields.io/badge/Bean_Validation-2496ED?style=flat)](https://beanvalidation.org/) | Request validation
+Documentation UI | [![Swagger UI](https://img.shields.io/badge/Swagger_UI-85EA2D?style=flat&logo=swagger&logoColor=black)](https://swagger.io/tools/swagger-ui/) | Interactive API documentation
+Build System | [![Gradle Kotlin DSL](https://img.shields.io/badge/Gradle-Kotlin_DSL-02303A?style=flat&logo=gradle&logoColor=white)](https://gradle.org/) | Build automation
+Containers | [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/) | Containerized application and local development
+Deployment | [![Render](https://img.shields.io/badge/Render-black?style=flat&logo=render&logoColor=46E3B7)](https://render.com) | Cloud hosting and application deployment
+Rate Limiting | [![Bucket4j](https://img.shields.io/badge/Bucket4j-8A2BE2?style=flat)](https://github.com/bucket4j/bucket4j) | Per IP request rate limiting
 
 ## Live API
 The API is publicly available on Render.
@@ -204,7 +204,20 @@ Request (automatic short code)
 
 ```json
 {
-  "url": "https://developer.android.com"
+  "url": "https://developer.android.com/"
+}
+```
+
+Response
+
+```json
+{
+  "id": 4,
+  "originalUrl": "https://developer.android.com/",
+  "shortCode": "HmgbZB",
+  "shortUrl": "https://encurtaai-5q3b.onrender.com/HmgbZB",
+  "accessCount": 0,
+  "lastAccessedAt": null
 }
 ```
 
@@ -221,7 +234,7 @@ Response
 
 ```json
 {
-  "id": 1,
+  "id": 2,
   "originalUrl": "https://developer.android.com",
   "shortCode": "devandroid",
   "shortUrl": "https://encurtaai-5q3b.onrender.com/devandroid",
@@ -235,26 +248,42 @@ Response
 {
   "data": [
     {
-      "id": 2,
-      "originalUrl": "https://www.linkedin.com/in/gblrodrigues",
-      "shortCode": "my-linkedin",
-      "shortUrl": "https://encurtaai-5q3b.onrender.com/my-linkedin",
-      "accessCount": 26,
-      "lastAccessedAt": "2026-10-14T15:04:51.548475Z"
+      "id": 4,
+      "originalUrl": "https://developer.android.com/",
+      "shortCode": "HmgbZB",
+      "shortUrl": "https://encurtaai-5q3b.onrender.com/HmgbZB",
+      "accessCount": 0,
+      "lastAccessedAt": null
     },
     {
-      "id": 1,
+      "id": 3,
+      "originalUrl": "https://github.com/gblrodrigues",
+      "shortCode": "my-github",
+      "shortUrl": "https://encurtaai-5q3b.onrender.com/my-github",
+      "accessCount": 4,
+      "lastAccessedAt": "2026-10-16T00:28:17.701972Z"
+    },
+    {
+      "id": 2,
       "originalUrl": "https://developer.android.com",
       "shortCode": "devandroid",
       "shortUrl": "https://encurtaai-5q3b.onrender.com/devandroid",
-      "accessCount": 24,
-      "lastAccessedAt": "2026-10-14T15:04:51.548475Z"
+      "accessCount": 3,
+      "lastAccessedAt": "2026-10-16T00:28:29.738164Z"
+    },
+    {
+      "id": 1,
+      "originalUrl": "https://www.linkedin.com/in/gblrodrigues/",
+      "shortCode": "my-linkedin",
+      "shortUrl": "https://encurtaai-5q3b.onrender.com/my-linkedin",
+      "accessCount": 19,
+      "lastAccessedAt": "2026-10-17T19:19:11.548853Z"
     }
   ],
   "pagination": {
     "page": 0,
     "size": 25,
-    "totalItems": 2,
+    "totalItems": 4,
     "totalPages": 1
   }
 }
