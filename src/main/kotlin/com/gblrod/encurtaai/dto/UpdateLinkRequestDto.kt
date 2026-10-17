@@ -6,9 +6,12 @@ import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import org.hibernate.validator.constraints.URL
 
+@Schema(
+    description = "Request payload for updating an existing shortened URL."
+)
 data class UpdateLinkRequestDto(
     @field:Schema(
-        description = "Updated original URL.",
+        description = "New destination URL for the shortened link.",
         example = "https://www.linkedin.com/in/gblrodrigues/"
     )
 
@@ -17,7 +20,11 @@ data class UpdateLinkRequestDto(
     val originalUrl: String,
 
     @field:Schema(
-        description = "Custom short code (3-20 characters).",
+        description = """
+            New short code for the link. Must contain 3-20 characters
+            and use only letters, numbers, underscores or hyphens.
+            The code must be unique if it differs from the current code.
+        """,
         example = "linkedin"
     )
     @field:Pattern(

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import org.hibernate.validator.constraints.URL
 
+@Schema(description = "Request payload for creating a shortened URL.")
 data class CreateLinkRequestDto(
     @field:Schema(
         description = "Original URL to be shortened.",
@@ -15,7 +16,12 @@ data class CreateLinkRequestDto(
     @field:URL(message = "Invalid URL")
     val url: String,
     @field:Schema(
-        description = "Custom short code (3-20 characters).",
+        description = """
+            Optional custom short code. If omitted or set to null,
+            a unique short code is generated automatically.
+            When provided, it must contain 3-20 characters and use
+            only letters, numbers, underscores or hyphens.
+        """,
         example = "my-linkedin"
     )
     @field:Pattern(
